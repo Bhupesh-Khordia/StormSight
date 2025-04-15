@@ -1,10 +1,31 @@
-# StormSight
+# 🌧️ StormSight: Reading SCENE Text in Bad Weather Conditions
+*[Under Active Development] | IC201P Design Practicum Project*  
 
-To run:
-1. Download craft pre-trained model from https://drive.google.com/file/d/1Jk4eGD7crsqCCg9C9VjCLkMN3ze8kutZ/view and place it in models/detection/craft/
-2. Run
+## 📌 Overview  
+**StormSight** is an ongoing project developing robust scene text recognition for images captured in rainy weather. Implemented as part of **IC201P Design Practicum**, it combines:  
+- **Weather Removal**: NERD-Rain for deraining  
+- **Text Detection**: CRAFT for localization  
+- **Text Recognition**: PARSeq for OCR  
+
+⚠️ *Note: This project is under active development. Results may vary.*  
+
+## 🛠️ Current Implementation Status  
+| Component       | Model       | Status          | 
+|----------------|------------|----------------|
+| Deraining      | NERD-Rain  | 🟡 Testing   |  
+| Text Detection | CRAFT      | ✅ Implemented |
+| Text Recognition | PARSeq    | ✅ Implemented     | 
+
+## 🚀 Quick Start (Development Preview)  
+
+### Installation  
 ```bash
-python -r requirements.txt
+git clone https://github.com/Bhupesh-Khordia/StormSight 
+cd StormSight  
+pip install -r requirements.txt  
 cd src
 python pipeline.py
 ```
+
+## 🎓 Academic Context
+**Developed for IC201P Design Practicum at IIT Mandi.**
