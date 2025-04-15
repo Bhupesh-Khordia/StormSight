@@ -1,1 +1,6 @@
-__pycache__/
+**/__pycache__/
+
+data/cropped/
+data/detected/
+data/input/
+data/output/

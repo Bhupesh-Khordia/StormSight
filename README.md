@@ -20,9 +20,17 @@
 
 ### Installation  
 ```bash
+# Clone the repository
 git clone https://github.com/Bhupesh-Khordia/StormSight 
 cd StormSight  
+
+# Install dependencies
 pip install -r requirements.txt  
+
+# Add images to the input folder
+# Place your images in the `data/input/` directory
+
+# Run the pipeline
 cd src
 python pipeline.py
 ```

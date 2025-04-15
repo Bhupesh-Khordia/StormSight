@@ -96,7 +96,7 @@ def run_craft_text_detection(
 
     net = CRAFT()
 
-    print('Loading weights from checkpoint (' + model_path + ')')
+    print('Loading weights from checkpoint (' + model_path + ').')
     if use_cuda:
         net.load_state_dict(copyStateDict(torch.load(model_path)))
     else:
@@ -127,7 +127,7 @@ def run_craft_text_detection(
     t = time.time()
 
     for k, image_path in enumerate(image_list):
-        print("Test image {:d}/{:d}: {:s}".format(k+1, len(image_list), image_path), end='\r')
+        print("Running craft on Test image {:d}/{:d}: {:s}".format(k+1, len(image_list), image_path), end='\r')
         image = imgproc.loadImage(image_path)
 
         bboxes, polys, score_text = test_net(

@@ -1,0 +1,10 @@
+Tue Apr 15 15:15:32 2025 - CPU Usage: 6.0%
+Tue Apr 15 15:15:33 2025 - CPU Usage: 29.5%
+Tue Apr 15 15:15:34 2025 - CPU Usage: 50.5%
+Tue Apr 15 15:15:35 2025 - CPU Usage: 54.9%
+Tue Apr 15 15:15:36 2025 - CPU Usage: 20.5%
+Tue Apr 15 15:15:37 2025 - CPU Usage: 33.1%
+Tue Apr 15 15:15:38 2025 - CPU Usage: 30.9%
+Tue Apr 15 15:15:39 2025 - CPU Usage: 50.7%
+Tue Apr 15 15:15:40 2025 - CPU Usage: 30.9%
+Tue Apr 15 15:15:41 2025 - CPU Usage: 3.4%
