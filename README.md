@@ -29,6 +29,7 @@ pip install -r requirements.txt
 
 # Add images to the input folder
 # Place your images in the `data/input/` directory
+# Add craft model to models/detection/craft and nerd-rain model to models/deraining/nerd_rain
 
 # Run the pipeline
 cd src

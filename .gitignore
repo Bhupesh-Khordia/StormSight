@@ -4,3 +4,5 @@ data/cropped/
 data/detected/
 data/input/
 data/output/
+
+*.pth
