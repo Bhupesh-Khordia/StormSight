@@ -4,6 +4,7 @@ from PIL import Image
 from detection.detect_text import run_craft_text_detection
 from detection.crop_img import crop_text_regions_from_images
 from recognition.read_text import recognize_text_from_image
+from deraining.single_image_test import derain_image_from_pipeline
 import psutil
 import time
 
@@ -21,8 +22,18 @@ if __name__ == "__main__":
     print("Running the model pipeline...")
 
     input_dir = "../data/input"
+    output_dir = "../data/derained"
 
-    run_craft_text_detection( input_dir='../data/input', model_path='../models/detection/craft/craft_mlt_25k.pth', use_cuda=False)
+    image_files = [f for f in os.listdir(input_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+
+    for img_file in image_files:
+        input_image_path = os.path.join(input_dir, img_file)
+        output_image_path = os.path.join(output_dir, f"derained_{img_file}")
+
+        # Call the deraining function for each image
+        derain_image_from_pipeline(input_image_path, output_image_path)
+
+    run_craft_text_detection(input_dir='../data/derained', model_path='../models/detection/craft/craft_mlt_25k.pth', use_cuda=False)
     crop_text_regions_from_images()
 
     cropped_dir = "../data/cropped"

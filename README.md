@@ -12,7 +12,7 @@
 ## 🛠️ Current Implementation Status  
 | Component       | Model       | Status          | 
 |----------------|------------|----------------|
-| Deraining      | NERD-Rain  | 🟡 Testing   |  
+| Deraining      | NERD-Rain  | ✅ Implemented   |  
 | Text Detection | CRAFT      | ✅ Implemented |
 | Text Recognition | PARSeq    | ✅ Implemented     | 
 

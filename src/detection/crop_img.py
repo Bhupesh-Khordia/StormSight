@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 
-def crop_text_regions_from_images(image_folder="../data/input", result_folder="../data/detected", output_folder="../data/cropped"):
+def crop_text_regions_from_images(image_folder="../data/derained", result_folder="../data/detected", output_folder="../data/cropped"):
     os.makedirs(output_folder, exist_ok=True)
 
     for img_file in os.listdir(image_folder):

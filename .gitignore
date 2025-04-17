@@ -1,5 +1,6 @@
 **/__pycache__/
 
+data/derained/
 data/cropped/
 data/detected/
 data/input/
