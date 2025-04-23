@@ -37,10 +37,14 @@ def derain_image_from_pipeline(input_image_path, output_image_path, weights_path
 
     # Preprocess Image
     def preprocess_image(image_path, win_size=256):
-        img = cv2.imread(image_path)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) / 255.0
-        img_tensor = torch.tensor(img.transpose(2, 0, 1), dtype=torch.float32).unsqueeze(0).to(device)
-        return img_tensor, img.shape
+            img = cv2.imread(image_path)
+            if img is None:
+                print("Error: Image not found.")
+                return
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) / 255.0
+            img = cv2.resize(img, (256, 256))  # Resize image to 256x256
+            img_tensor = torch.tensor(img.transpose(2, 0, 1), dtype=torch.float32).unsqueeze(0).to(device)
+            return img_tensor, img.shape
 
     # Inference and Save Image
     def process_image(input_path, output_path, win_size=256):

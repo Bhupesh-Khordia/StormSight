@@ -11,7 +11,7 @@ import time
 def monitor_cpu_usage():
     while True:
         cpu_usage = psutil.cpu_percent(interval=1)
-        with open("cpu_log.txt", "a") as log_file:
+        with open("../data/output/cpu_log.txt", "a") as log_file:
             log_file.write(f"{time.ctime()} - CPU Usage: {cpu_usage}%\n")
 
 if __name__ == "__main__":

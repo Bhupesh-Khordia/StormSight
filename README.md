@@ -16,6 +16,10 @@
 | Text Detection | CRAFT      | ✅ Implemented |
 | Text Recognition | PARSeq    | ✅ Implemented     | 
 
+## Datasets
+
+[Google Drive](https://drive.google.com/drive/folders/1AHwhVoIo3wW9dvYGbghFSsZcR68g-GcQ?usp=sharing)
+
 ## 🚀 Quick Start (Development Preview)  
 
 ### Installation  
@@ -23,6 +27,23 @@
 # Clone the repository
 git clone https://github.com/Bhupesh-Khordia/StormSight 
 cd StormSight  
+
+# Create new environment (optional but recommended)
+
+# Windows - 
+python -m venv venv
+
+# Linux/MacOS - 
+python3 -m venv venv
+
+# Acticate the environment
+
+# Windows -
+.\venv\Scripts\activate
+
+# Linux/MacOS -
+source venv/bin/activate
+
 
 # Install dependencies
 pip install -r requirements.txt  

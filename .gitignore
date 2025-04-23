@@ -6,4 +6,6 @@ data/detected/
 data/input/
 data/output/
 
+venv/
+
 *.pth
