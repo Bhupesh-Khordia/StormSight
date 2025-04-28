@@ -96,6 +96,8 @@ import os
 
 # ----------------- Load Restormer model -----------------
 
+use_cuda = False  # Set to True if you want to use GPU
+
 def get_weights_and_parameters(parameters):
     weights = "../models/deraining/restormer/deraining.pth"
     return weights, parameters
@@ -110,14 +112,17 @@ parameters = {
     'ffn_expansion_factor': 2.66, 
     'bias': False, 
     'LayerNorm_type': 'WithBias', 
-    'dual_pixel_task': False
+    'dual_pixel_task': False,
 }
 
 weights, parameters = get_weights_and_parameters(parameters)
 
 load_arch = run_path(os.path.join('restormer', 'basicsr', 'models', 'archs', 'restormer_arch.py'))
 model = load_arch['Restormer'](**parameters)
-checkpoint = torch.load(weights, map_location=torch.device('cpu'))
+if use_cuda:
+    model.cuda()  # Move model to GPU
+
+checkpoint = torch.load(weights)
 model.load_state_dict(checkpoint['params'])
 model.eval()
 
@@ -126,9 +131,13 @@ model.eval()
 def derain_single_image(input_path, output_path):
     img_multiple_of = 8
 
-    img = cv2.cvtColor(cv2.imread(input_path), cv2.COLOR_BGR2RGB)
+    print(f"\n ==> Running Restormer on {input_path} ...\n ")
 
-    input_ = torch.from_numpy(img).float().div(255.).permute(2, 0, 1).unsqueeze(0)
+    img = cv2.cvtColor(cv2.imread(input_path), cv2.COLOR_BGR2RGB)
+    if use_cuda:
+        input_ = torch.from_numpy(img).float().div(255.).permute(2, 0, 1).unsqueeze(0).cuda()
+    else:
+        input_ = torch.from_numpy(img).float().div(255.).permute(2, 0, 1).unsqueeze(0)
 
     h, w = input_.shape[2], input_.shape[3]
     H, W = ((h + img_multiple_of) // img_multiple_of) * img_multiple_of, ((w + img_multiple_of) // img_multiple_of) * img_multiple_of
@@ -136,12 +145,21 @@ def derain_single_image(input_path, output_path):
     padw = W - w if w % img_multiple_of != 0 else 0
     input_ = F.pad(input_, (0, padw, 0, padh), 'reflect')
 
-    with torch.no_grad():
+    if use_cuda:
         restored = model(input_)
         restored = torch.clamp(restored, 0, 1)
+    else:
+        with torch.no_grad():
+            restored = model(input_)
+            restored = torch.clamp(restored, 0, 1)
 
     restored = restored[:, :, :h, :w]
-    restored = restored.permute(0, 2, 3, 1).cpu().numpy()
+
+    if use_cuda:
+        restored = restored.permute(0, 2, 3, 1).cpu().detach().numpy()
+    else:
+        restored = restored.permute(0, 2, 3, 1).cpu().numpy()
+    
     restored = img_as_ubyte(restored[0])
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
