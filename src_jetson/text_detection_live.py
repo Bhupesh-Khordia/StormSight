@@ -5,6 +5,7 @@ import cv2
 import nanocamera as nano
 from PIL import Image
 from collections import OrderedDict
+import numpy as np
 
 import detection.craft_utils as craft_utils
 import detection.imgproc as imgproc
@@ -85,6 +86,10 @@ def main():
     output_dir = "output"
     crops_dir = os.path.join(output_dir, "crops")
     frames_dir = os.path.join(output_dir, "frames")
+    input_dir = os.path.join(output_dir, "input")
+    derain_dir = os.path.join(output_dir, "derained")
+    os.makedirs(input_dir, exist_ok=True)
+    os.makedirs(derain_dir, exist_ok=True)
     os.makedirs(crops_dir, exist_ok=True)
     os.makedirs(frames_dir, exist_ok=True)
 
@@ -100,14 +105,12 @@ def main():
         print("[ERROR] Cannot open NanoCamera.")
         return
 
-    # Initialize the deraining model
     derainer = RestormerDerainer()
-
     print("[INFO] Starting live text detection. Press 'q' to quit.")
 
     frame_count = 0
-    skip_frames = 10
-    last_boxes_and_texts = []  # store last boxes and texts
+    skip_frames = 50
+    last_boxes_and_texts = []
 
     while True:
         start_time = time.time()
@@ -116,38 +119,52 @@ def main():
             print("[WARNING] Failed to grab frame.")
             continue
 
-
-        # 🔧 Derain the frame
-        derain_path = "temp_derain.jpg"
-        cv2.imwrite(derain_path, frame)  # Save original to disk temporarily
-        derainer.derain_image(derain_path, derain_path)  # Overwrite with derained version
-        frame = cv2.imread(derain_path)  # Reload derained image
-
         frame_count += 1
         timestamp = int(time.time() * 1000)
 
         if frame_count % skip_frames == 0:
-            # Process and update the cache
-            boxes = test_net_live(craft_model, frame[:, :, ::-1], canvas_size=144)
+            input_filename = f"{timestamp}.jpg"
+            input_path = os.path.join(input_dir, input_filename)
+            cv2.imwrite(input_path, frame)
+
+            derain_filename = f"{timestamp}.jpg"
+            #derain_path = os.path.join(derain_dir, derain_filename)
+            #derainer.derain_image(input_path, derain_path)
+
+            #derained_frame = cv2.imread(derain_path)
+            derained_frame = cv2.imread(input_path)
+            if derained_frame is None:
+                print("[ERROR] Failed to load derained image.")
+                continue
+
+            h_orig, w_orig = frame.shape[:2]
+            h_der, w_der = derained_frame.shape[:2]
+
+            scale_x = w_orig / w_der
+            scale_y = h_orig / h_der
+
+            boxes = test_net_live(craft_model, derained_frame[:, :, ::-1], canvas_size=144)
+
+            print(f"[DEBUG] Detected {len(boxes)} boxes")
+
             new_boxes_and_texts = []
 
             for idx, box in enumerate(boxes):
+                # Box is in 256x256 space (derained_frame)
+                box = np.array(box)
                 x_min = int(min(box[:, 0]))
                 y_min = int(min(box[:, 1]))
                 x_max = int(max(box[:, 0]))
                 y_max = int(max(box[:, 1]))
 
-                cropped_img = frame[y_min:y_max, x_min:x_max]
+                cropped_img = derained_frame[y_min:y_max, x_min:x_max]
                 if cropped_img.size == 0:
                     continue
 
                 text, conf = recognize_text_from_image_array(cropped_img)
                 if text:
                     if torch.is_tensor(conf):
-                        if conf.numel() == 1:
-                            conf_val = conf.item()
-                        else:
-                            conf_val = conf.mean().item()
+                        conf_val = conf.item() if conf.numel() == 1 else conf.mean().item()
                     elif isinstance(conf, (list, tuple)):
                         conf_val = float(conf[0]) if len(conf) == 1 else sum(conf) / len(conf)
                     else:
@@ -168,19 +185,38 @@ def main():
                     with open(output_file, "a") as f:
                         f.write(f"Time-{timestamp} Region-{idx}: Text: {text}, Confidence: {conf_val}\n")
 
-                    new_boxes_and_texts.append((box, text))
+                    # Scale box for display on original frame
+                    scaled_box = np.array([[int(x * scale_x), int(y * scale_y)] for x, y in box])
+                    new_boxes_and_texts.append((scaled_box, text, timestamp))
+                else:
+                    print("[INFO] No SCENE Text Detected.")
 
-            last_boxes_and_texts = new_boxes_and_texts  # update cache
+            if new_boxes_and_texts:
+                last_boxes_and_texts.extend(new_boxes_and_texts)
 
-        # Draw the last known boxes and texts
-        for box, text in last_boxes_and_texts:
-            x_min = int(min(box[:, 0]))
-            y_min = int(min(box[:, 1]))
-            x_max = int(max(box[:, 0]))
-            y_max = int(max(box[:, 1]))
-            cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
-            cv2.putText(frame, text, (x_min, y_min - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+        # Prune old boxes
+        current_time = int(time.time() * 1000)
+        box_display_duration = 2000
+
+        last_boxes_and_texts = [
+            (box, text, ts) for box, text, ts in last_boxes_and_texts
+            if current_time - ts <= box_display_duration
+        ]
+
+        for box, text, ts in last_boxes_and_texts:
+            try:
+                box = np.array(box)
+                if box.shape == (4, 2):
+                    pts = box.astype(np.int32).reshape((-1, 1, 2))
+                    cv2.polylines(frame, [pts], isClosed=True, color=(0, 255, 0), thickness=2)
+                    x_min = int(np.min(box[:, 0]))
+                    y_min = int(np.min(box[:, 1]))
+                    cv2.putText(frame, text, (x_min, y_min - 10),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                else:
+                    print(f"[WARNING] Unexpected box shape: {box.shape}")
+            except Exception as e:
+                print(f"[ERROR] Failed to draw box: {e}")
 
         # Show FPS
         fps = 1.0 / (time.time() - start_time)
