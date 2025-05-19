@@ -31,7 +31,7 @@ source venv/bin/activate  # Linux/MacOS
 .\venv\Scripts\activate   # Windows
 
 # Install core dependencies
-pip install -r requirements.txt  # or requirements_jetson.txt for edge devices
+pip install -r requirements/base.txt  # or requirements/jetson.txt for edge devices
 ```
 
 ## 💻 Usage Options  
