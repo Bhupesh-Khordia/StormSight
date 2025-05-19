@@ -83,6 +83,6 @@ wheel==0.36.2
 yacs==0.1.8
 yarl==1.6.3
 zipp==3.4.1
-
+nanocamera
 
 # torch torchvision torchaudio opencv (all with cuda)

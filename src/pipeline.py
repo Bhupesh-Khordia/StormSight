@@ -1,110 +1,45 @@
-# import os
-# from glob import glob
-# from PIL import Image
-# from detection.detect_text import run_craft_text_detection
-# from detection.crop_img import crop_text_regions_from_images
-# from recognition.read_text import recognize_text_from_image
-# from deraining.single_image_test import derain_image_from_pipeline
-# import psutil
-# import time
-
-# def monitor_cpu_usage():
-#     while True:
-#         cpu_usage = psutil.cpu_percent(interval=1)
-#         with open("../data/output/cpu_log.txt", "a") as log_file:
-#             log_file.write(f"{time.ctime()} - CPU Usage: {cpu_usage}%\n")
-
-# if __name__ == "__main__":
-#     # import threading
-#     # monitor_thread = threading.Thread(target=monitor_cpu_usage, daemon=True)
-#     # monitor_thread.start()
-
-#     print("Running the model pipeline...")
-
-#     input_dir = "../data/input"
-#     output_dir = "../data/derained"
-
-#     image_files = [f for f in os.listdir(input_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-
-#     for img_file in image_files:
-#         input_image_path = os.path.join(input_dir, img_file)
-#         output_image_path = os.path.join(output_dir, f"derained_{img_file}")
-
-#         # Call the deraining function for each image
-#         derain_image_from_pipeline(input_image_path, output_image_path)
-
-#     run_craft_text_detection(input_dir='../data/derained', model_path='../models/detection/craft/craft_mlt_25k.pth', use_cuda=False)
-#     crop_text_regions_from_images()
-
-#     cropped_dir = "../data/cropped"
-
-#     output_dir = "../data/output"
-#     os.makedirs(output_dir, exist_ok=True)
-
-#     output_file = os.path.join(output_dir, "results.txt")
-
-#     for img_file in os.listdir(cropped_dir):
-#         if img_file.lower().endswith((".jpg", ".jpeg", ".png")):
-#             img_path = os.path.join(cropped_dir, img_file)
-#             text, conf = recognize_text_from_image(img_path)
-#             with open(output_file, "a") as f:
-#                 f.write(f"Image: {img_file}, Recognized text: {text}, Confidence: {conf}\n")
-#         with open(output_file, "a") as f:
-#             f.write("\n")
-
-
 import os
 from detection.detect_text import run_craft_text_detection
 from detection.crop_img import crop_text_regions_from_images
 from recognition.read_text import recognize_text_from_image
 from restormer.model import derain_single_image 
-import psutil
-import time
-
-def monitor_cpu_usage():
-    while True:
-        cpu_usage = psutil.cpu_percent(interval=1)
-        with open("../data/output/cpu_log.txt", "a") as log_file:
-            log_file.write(f"{time.ctime()} - CPU Usage: {cpu_usage}%\n")
+import argparse
 
 if __name__ == "__main__":
-    # import threading
-    # monitor_thread = threading.Thread(target=monitor_cpu_usage, daemon=True)
-    # monitor_thread.start()
+    parser = argparse.ArgumentParser(description="StormSight Model Pipeline")
+    parser.add_argument("--input", type=str, default="../data/input", help="Directory with input images")
+    parser.add_argument("--output", type=str, default="../data/output", help="Directory to save output results")
+    args = parser.parse_args()
 
     print("Running the model pipeline...")
 
-    input_dir = "../data/input"
-    derained_dir = "../data/derained"
-    os.makedirs(derained_dir, exist_ok=True)
+    os.makedirs(args.derained_dir, exist_ok=True)
 
-    image_files = [f for f in os.listdir(input_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+    image_files = [f for f in os.listdir(args.input_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
 
     for img_file in image_files:
-        input_image_path = os.path.join(input_dir, img_file)
-        output_image_path = os.path.join(derained_dir, f"derained_{img_file}")
+        input_image_path = os.path.join(args.input_dir, img_file)
+        output_image_path = os.path.join(args.derained_dir, f"derained_{img_file}")
 
         # Derain each image
         derain_single_image(input_image_path, output_image_path)
 
     # Text detection
     run_craft_text_detection(
-        input_dir=derained_dir,
-        model_path='../models/detection/craft/craft_mlt_25k.pth',
-        use_cuda=False
+        input_dir=args.derained_dir,
+        model_path=args.craft_model,
+        use_cuda=args.use_cuda
     )
 
     # Crop text regions
     crop_text_regions_from_images()
 
-    cropped_dir = "../data/cropped"
-    output_dir = "../data/output"
-    os.makedirs(output_dir, exist_ok=True)
-    output_file = os.path.join(output_dir, "results.txt")
+    os.makedirs(args.output_dir, exist_ok=True)
+    output_file = os.path.join(args.output_dir, args.output_file)
 
-    for img_file in os.listdir(cropped_dir):
+    for img_file in os.listdir(args.cropped_dir):
         if img_file.lower().endswith((".jpg", ".jpeg", ".png")):
-            img_path = os.path.join(cropped_dir, img_file)
+            img_path = os.path.join(args.cropped_dir, img_file)
             text, conf = recognize_text_from_image(img_path)
             with open(output_file, "a") as f:
                 f.write(f"Image: {img_file}, Recognized text: {text}, Confidence: {conf}\n")

@@ -128,10 +128,10 @@ def main():
             cv2.imwrite(input_path, frame)
 
             derain_filename = f"{timestamp}.jpg"
-            #derain_path = os.path.join(derain_dir, derain_filename)
-            #derainer.derain_image(input_path, derain_path)
+            derain_path = os.path.join(derain_dir, derain_filename)
+            derainer.derain_image(input_path, derain_path)
 
-            #derained_frame = cv2.imread(derain_path)
+            derained_frame = cv2.imread(derain_path)
             derained_frame = cv2.imread(input_path)
             if derained_frame is None:
                 print("[ERROR] Failed to load derained image.")

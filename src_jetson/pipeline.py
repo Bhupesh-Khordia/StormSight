@@ -2,8 +2,6 @@ import os
 from detection.detect_text import run_craft_text_detection
 from detection.crop_img import crop_text_regions_from_images
 from recognition.read_text import recognize_text_from_image
-import psutil
-import time
 
 if __name__ == "__main__":
     print("Running the model pipeline...")
