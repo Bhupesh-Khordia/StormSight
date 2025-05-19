@@ -6,6 +6,8 @@ import nanocamera as nano
 from PIL import Image
 from collections import OrderedDict
 import numpy as np
+import sys
+sys.path.append("..")
 
 import detection.craft_utils as craft_utils
 import detection.imgproc as imgproc

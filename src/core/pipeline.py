@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append("..")
 from detection.detect_text import run_craft_text_detection
 from detection.crop_img import crop_text_regions_from_images
 from recognition.read_text import recognize_text_from_image
@@ -13,16 +15,16 @@ if __name__ == "__main__":
 
     print("Running the model pipeline...")
 
-    # os.makedirs("../data/derained", exist_ok=True)
+    os.makedirs("../data/derained", exist_ok=True)
 
-    # image_files = [f for f in os.listdir(args.input) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+    image_files = [f for f in os.listdir(args.input) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
 
-    # for img_file in image_files:
-    #     input_image_path = os.path.join(args.input, img_file)
-    #     output_image_path = os.path.join("../data/derained", f"derained_{img_file}")
+    for img_file in image_files:
+        input_image_path = os.path.join(args.input, img_file)
+        output_image_path = os.path.join("../data/derained", f"derained_{img_file}")
 
-    #     # Derain each image
-    #     derain_single_image(input_image_path, output_image_path)
+        # Derain each image
+        derain_single_image(input_image_path, output_image_path)
 
     # Text detection
     run_craft_text_detection(

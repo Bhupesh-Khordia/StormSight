@@ -32,6 +32,9 @@ source venv/bin/activate  # Linux/MacOS
 
 # Install core dependencies
 pip install -r requirements/base.txt  # or requirements/jetson.txt for edge devices
+
+# Download pretrained models
+bash scripts/download_models.sh
 ```
 
 ## 💻 Usage Options  
@@ -39,11 +42,11 @@ pip install -r requirements/base.txt  # or requirements/jetson.txt for edge devi
 ### 1. Command Line  
 ```bash
 # Single image processing
-cd src
+cd src/core
 python pipeline.py
 
 # Live camera processing (Jetson)
-cd src_jetson
+cd src_jetson/core
 python text_detection_live.py
 ```
 
