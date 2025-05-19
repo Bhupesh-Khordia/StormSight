@@ -99,7 +99,7 @@ import os
 use_cuda = False  # Set to True if you want to use GPU
 
 def get_weights_and_parameters(parameters):
-    weights = "../models/deraining/restormer/deraining.pth"
+    weights = "../models/deraining/deraining.pth"
     return weights, parameters
 
 parameters = {
