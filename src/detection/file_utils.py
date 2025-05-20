@@ -29,7 +29,7 @@ def list_files(in_path):
     # gt_files.sort()
     return img_files, mask_files, gt_files
 
-def saveResult(img_file, img, boxes, dirname='../data/detected/', verticals=None, texts=None):
+def saveResult(img_file, img, boxes, dirname='../../data/detected/', verticals=None, texts=None):
         """ save text detection result one by one
         Args:
             img_file (str): image file name

@@ -87,7 +87,7 @@ def run_craft_text_detection(
         poly=False,
         show_time=False,
         use_refiner=False,
-        result_folder='../data/detected/'):
+        result_folder='../../data/detected/'):
 
     if not os.path.isdir(result_folder):
         os.makedirs(result_folder, exist_ok=True)
@@ -141,6 +141,56 @@ def run_craft_text_detection(
 
         cv2.imwrite(mask_file, score_text)
 
-        file_utils.saveResult(image_path, image[:,:,::-1], polys)
+        file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=result_folder)
 
     print("\nElapsed time : {}s".format(time.time() - t))
+
+def run_craft_on_image(img, model_path='weights/craft_mlt_25k.pth', refiner_model_path='weights/craft_refiner_CTW1500.pth', use_cuda=True, text_threshold=0.7, low_text=0.4, link_threshold=0.4, canvas_size=1280, mag_ratio=1.5, poly=False, show_time=False, use_refiner=False, image_name='image', result_folder='../data/detected/'):
+    if not os.path.isdir(result_folder):
+        os.makedirs(result_folder, exist_ok=True)
+
+    net = CRAFT()
+
+    if use_cuda:
+        net.load_state_dict(copyStateDict(torch.load(model_path)))
+    else:
+        net.load_state_dict(copyStateDict(torch.load(model_path, map_location='cpu')))
+
+    if use_cuda:
+        net = net.cuda()
+        net = torch.nn.DataParallel(net)
+        cudnn.benchmark = False
+
+    net.eval()
+
+    refine_net = None
+    if use_refiner:
+        from src.detection.refinenet import RefineNet
+        refine_net = RefineNet()
+        if use_cuda:
+            refine_net.load_state_dict(copyStateDict(torch.load(refiner_model_path)))
+            refine_net = refine_net.cuda()
+            refine_net = torch.nn.DataParallel(refine_net)
+        else:
+            refine_net.load_state_dict(copyStateDict(torch.load(refiner_model_path, map_location='cpu')))
+
+        refine_net.eval()
+        poly = True
+
+    t = time.time()
+
+    image = img  # should be a NumPy array in RGB format
+
+    bboxes, polys, score_text = test_net(
+        net, image, text_threshold, link_threshold, low_text, use_cuda,
+        poly, refine_net, canvas_size, mag_ratio, show_time
+    )
+
+    mask_file = os.path.join(result_folder, f"res_{image_name}_mask.jpg")
+    cv2.imwrite(mask_file, score_text)
+
+    file_utils.saveResult(image_name, image[:, :, ::-1], polys, dirname=result_folder)
+
+    print("\nElapsed time : {}s".format(time.time() - t))
+
+    return polys, bboxes, score_text

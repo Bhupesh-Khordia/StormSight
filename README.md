@@ -11,6 +11,10 @@
   - 🔠 **Text Recognition**: PARSeq transformer OCR  
   - 🤖 **LLM Enhancement**: Optional Gemini 2.0 Flash post-processing  
 
+- **Multiple Interfaces**:  
+  - 🖥️ **Web UI** (Streamlit) for static images  
+  - 🎥 **Live Processing** (Jetson/OpenCV)  
+
 ## 📂 Project Architecture  
 ![StormSight Architecture](assets/architecture.png)  
 
@@ -39,7 +43,15 @@ bash scripts/download_models.sh
 
 ## 💻 Usage Options  
 
-### 1. Command Line  
+### 1. Web Interface (Streamlit)  
+```bash
+cd src/core
+streamlit run ../../frontend/app.py
+```
+![Web Interface](assets/web-ui.png)  
+*Features drag-n-drop processing and side-by-side comparisons*
+
+### 2. Command Line  
 ```bash
 # Single image processing
 cd src/core
@@ -57,8 +69,3 @@ python text_detection_live.py
 **Team**:  
 - Anshul Mendiratta  
 - Bhupesh Yadav  
-
-## 🤝 Contributing  
-We welcome contributions! Please see:  
-- [Development Guidelines](docs/DEVELOPMENT.md)  
-- [Roadmap](docs/ROADMAP.md)  

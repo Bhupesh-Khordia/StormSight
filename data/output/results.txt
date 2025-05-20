@@ -1,8 +1,0 @@
-Image: derained_rainy_scene_line1.jpg, Recognized text: INVESTMENTS, Confidence: tensor([0.9999, 0.9999, 0.9998, 0.9997, 0.9990, 0.9995, 0.9999, 0.9998, 0.9999,
-        0.9999, 0.9990, 0.9832])
-
-Image: derained_rainy_scene_line3.jpg, Recognized text: PENSIONS, Confidence: tensor([0.9998, 0.9998, 0.9999, 0.9999, 0.9998, 0.9998, 0.9999, 0.9995, 0.9971])
-
-Image: derained_rainy_scene_line5.jpg, Recognized text: MORTGAGES, Confidence: tensor([0.9997, 0.9996, 0.9998, 0.9954, 0.9996, 1.0000, 0.9999, 0.9999, 0.9995,
-        0.9984])
-
