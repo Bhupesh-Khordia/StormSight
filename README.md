@@ -68,4 +68,8 @@ python text_detection_live.py
 **Developed for IC201P Design Practicum at IIT Mandi**  
 **Team**:  
 - Anshul Mendiratta  
-- Bhupesh Yadav  
+- Bhupesh Yadav
+
+## Demo Files
+
+[Drive] (https://drive.google.com/drive/folders/14apHj84OAeWBcsNb2uSnvOpGAQiSjnaE)
