@@ -70,6 +70,6 @@ python text_detection_live.py
 - Anshul Mendiratta  
 - Bhupesh Yadav
 
-## Demo Files
+## 🪧 Live Demo Files
 
-[Drive] (https://drive.google.com/drive/folders/14apHj84OAeWBcsNb2uSnvOpGAQiSjnaE)
+![Google Drive](https://drive.google.com/drive/folders/14apHj84OAeWBcsNb2uSnvOpGAQiSjnaE)
