@@ -72,4 +72,4 @@ python text_detection_live.py
 
 ## 🪧 Live Demo Files
 
-![Google Drive](https://drive.google.com/drive/folders/14apHj84OAeWBcsNb2uSnvOpGAQiSjnaE)
+[Google Drive](https://drive.google.com/drive/folders/14apHj84OAeWBcsNb2uSnvOpGAQiSjnaE)
